@@ -1,0 +1,19 @@
+#######
+##
+##----- LOSYME
+##----- POE::Component::ICal
+##----- Schedule POE events using rfc2445 recurrences
+##----- Changes
+##
+########################################################################################################################
+
+Revision history
+----------------
+
+0.01    21.03.2011
+        First version, released by LOSYME
+0.02    19.10.2011
+        Use of the variable $_schedules as a replacement of the heap
+        Addition of the method remove_all()
+
+####### END ############################################################################################################
