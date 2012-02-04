@@ -51,7 +51,7 @@ Synopsis
 Author
 ------
 
-Lo&iuml;c TROCHET
+Lo&iuml;c TROCHET <losyme@gmail.com>
 
 Copyright and license
 ---------------------
