@@ -9,7 +9,8 @@
 
 use strict;
 use warnings;
-use lib 't';
+use FindBin;
+use lib "$FindBin::Bin";
 use tests::tidy execute => qw(start);
 
 ####### END ############################################################################################################

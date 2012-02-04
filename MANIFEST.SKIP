@@ -11,6 +11,7 @@
 ^\.project$
 ^\.includepath$
 
+\B\.git\b
 \B\.svn\b
 
 \bMANIFEST\.bak
@@ -39,6 +40,7 @@
 \.#
 \.rej$
 
+^README\.md
 ^MANIFEST\.SKIP
 
 ^MYMETA\.

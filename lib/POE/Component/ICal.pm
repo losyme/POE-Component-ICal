@@ -12,7 +12,7 @@ package POE::Component::ICal;
 use strict;
 use warnings FATAL => qw(all);
 
-our $VERSION   =   '0.02';
+our $VERSION   =   '0.03';
 our $AUTHORITY = 'LOSYME';
 
 use Carp qw(croak);
@@ -23,8 +23,8 @@ use base qw(POE::Component::Schedule);
 
 my $_schedules = {};
 
-##--------------------------------------------------------------------------------------------------------------------##
-## This method allows to verify the validity of a rfc2445 recurrence.
+###-------------------------------------------------------------------------------------------------------------------##
+### This method allows to verify the validity of a rfc2445 recurrence.
 sub verify
 {
     my ($class, $ical) = @_;
@@ -41,8 +41,8 @@ sub verify
     return 1;
 }
 
-##--------------------------------------------------------------------------------------------------------------------##
-## This method add a schedule.
+###-------------------------------------------------------------------------------------------------------------------##
+### This method add a schedule.
 sub add_schedule
 {
     my ($class, $shedule, $event, $ical, @args) = @_;
@@ -56,24 +56,24 @@ sub add_schedule
     return $_schedules->{$session->ID}->{$shedule} = $class->SUPER::add($session, $event => $value, @args);
 }
 
-##--------------------------------------------------------------------------------------------------------------------##
-## This method calls C<add_schedule()> with schedule name equal to event name.
+###-------------------------------------------------------------------------------------------------------------------##
+### This method calls C<add_schedule()> with schedule name equal to event name.
 sub add
 {
     my ($class, $event, $ical, @args) = @_;
     return $class->add_schedule($event, $event, $ical, @args);
 }
 
-##--------------------------------------------------------------------------------------------------------------------##
-## This method remove a schedule.
+###-------------------------------------------------------------------------------------------------------------------##
+### This method remove a schedule.
 sub remove
 {
     my ($class, $schedule) = @_;
     delete $_schedules->{POE::Kernel->get_active_session->ID}->{$schedule};
 }
 
-##--------------------------------------------------------------------------------------------------------------------##
-## This method remove all schedules from the active session.
+###-------------------------------------------------------------------------------------------------------------------##
+### This method remove all schedules from the active session.
 sub remove_all
 {
     delete $_schedules->{POE::Kernel->get_active_session->ID};
@@ -269,6 +269,8 @@ The section 4.3.10 of rfc2445: L<http://www.apps.ietf.org/rfc/rfc2445.html>.
 =head1 AUTHOR
 
 LoE<iuml>c TROCHET E<lt>losyme@gmail.comE<gt>
+
+Repository available at L<https://github.com/losyme/POE-Component-ICal>.
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -1,6 +1,14 @@
+#######
+##
+##----- LOSYME
+##----- POE::Component::ICal
+##----- Schedule POE events using rfc2445 recurrences
+##----- Makefile.PL
+##
+########################################################################################################################
+
 use strict;
 use ExtUtils::MakeMaker;
-eval 'use ExtUtils::MakeMaker::Coverage';
 
 WriteMakefile
 (
@@ -8,19 +16,21 @@ WriteMakefile
     , LICENSE       => 'perl'
     , AUTHOR        => 'Loïc TROCHET <losyme@gmail.com>'
     , VERSION_FROM  => 'lib/POE/Component/ICal.pm'
-    , ABSTRACT_FROM => 'lib/POE/Component/ICal.pm'
-    , PL_FILES      => {}
-    , dist          => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', }
+    , ABSTRACT      => 'Schedule POE events using rfc2445 recurrences.'
     , clean         => { FILES => 'POE-Component-ICal-*' }
+    , META_MERGE    => { resources => { repository  => 'https://github.com/losyme/POE-Component-ICal' }}
+    , BUILD_REQUIRES
+      => {
+          'Test::More' => 0
+      }
     , PREREQ_PM
       => {
-######### requires
           'Carp'                     => 0
         , 'DateTime'                 => 0
         , 'DateTime::Event::ICal'    => 0
         , 'POE'                      => 0
         , 'POE::Component::Schedule' => 0
-######### build_requires
-        , 'Test::More'               => 0
       }
 );
+
+####### END ############################################################################################################
