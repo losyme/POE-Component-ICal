@@ -12,10 +12,15 @@ Revision history
 
 0.01    21.03.2011
         First version, released by LOSYME
+        
 0.02    19.10.2011
         Use of the variable $_schedules as a replacement of the heap
         Addition of the method remove_all()
+        
 0.03    04.02.2012
         Use of Find::Bin for test::tidy and cosmetic changes
+        
+0.04    ??.??.2012
+        ?
 
 ####### END ############################################################################################################

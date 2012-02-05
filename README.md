@@ -1,15 +1,15 @@
 POE::Component::ICal
 ====================
 
-Schedule [POE](http://search.cpan.org/~rcaputo/POE-1.350/lib/POE.pm) events using rfc2445 recurrences.
+Schedule [POE](http://search.cpan.org/~rcaputo/POE/) events using rfc2445 recurrences.
 
 Description
 -----------
 
-This component extends [POE::Component::Schedule](http://search.cpan.org/~dolmen/POE-Component-Schedule-0.95/lib/POE/Component/Schedule.pm) by adding an easy way to specify event schedules
+This component extends [POE::Component::Schedule](http://search.cpan.org/~dolmen/POE-Component-Schedule/) by adding an easy way to specify event schedules
 using rfc2445 recurrence.
 
-See [DateTime::Event::ICal](http://search.cpan.org/~fglock/DateTime-Event-ICal-0.10/lib/DateTime/Event/ICal.pm) for the syntax, the list of the authorized parameters and their use.
+See [DateTime::Event::ICal](http://search.cpan.org/~fglock/DateTime-Event-ICal/) for the syntax, the list of the authorized parameters and their use.
 
 See also the section 4.3.10 of [rfc2445](<http://www.apps.ietf.org/rfc/rfc2445.html>).
 
@@ -56,7 +56,7 @@ Lo&iuml;c TROCHET <losyme@gmail.com>
 Copyright and license
 ---------------------
 
-Copyright &copy; 2011 by Lo&iuml;c TROCHET.
+Copyright &copy; 2011-2012 by Lo&iuml;c TROCHET.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

@@ -11,6 +11,6 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin";
-use tests::tidy execute => qw(prerequisites);
+use test::tidy execute => qw(prerequisites);
 
 ####### END ############################################################################################################
