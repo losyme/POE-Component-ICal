@@ -4,7 +4,7 @@ Changes
 Build.PL
 Makefile.PL
 lib/POE/Component/ICal.pm
-t/tests/tidy.pm
+t/test/tidy.pm
 t/00_start.t
 t/01_prerequisites.t
 t/02_load.t

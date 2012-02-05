@@ -91,7 +91,7 @@ POE::Component::ICal - Schedule POE events using rfc2445 recurrences.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.04
 
 =head1 SYNOPSIS
 
