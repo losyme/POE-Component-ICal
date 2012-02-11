@@ -274,7 +274,7 @@ Repository available at L<https://github.com/losyme/POE-Component-ICal>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright E<copy> 2011-2012 by LoE<iuml>c TROCHET.
+Copyright (c) 2011-2012 by LoE<iuml>c TROCHET.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
