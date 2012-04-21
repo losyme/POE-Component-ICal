@@ -10,9 +10,9 @@
 package POE::Component::ICal;
 
 use strict;
-use warnings FATAL => qw(all);
+use warnings;
 
-our $VERSION   =   '0.04';
+our $VERSION   =   '0.05';
 our $AUTHORITY = 'LOSYME';
 
 use Carp qw(croak);
