@@ -1,0 +1,175 @@
+# NAME
+
+POE::Component::ICal - Schedule POE events using rfc2445 recurrences
+
+# VERSION
+
+version 0.123610
+
+# SYNOPSIS
+
+    use strict;
+    use warnings;
+    use POE;
+    use POE::Component::ICal;
+
+    my $count = 5;
+
+    POE::Session->create
+    (
+        inline_states =>
+        {
+            _start => sub
+            {
+                print "_start\n";
+                $_[HEAP]{count} = $count;
+                POE::Component::ICal->add(tick => { freq => 'secondly', interval => 1 });
+            },
+            tick => sub
+            {
+                print "tick: ' . --$_[HEAP]{count}\n";
+                POE::Component::ICal->remove('tick') if $_[HEAP]{count} == 0;
+            },
+            _stop => sub
+            {
+                print "_stop\n";
+            }
+        }
+    );
+
+    POE::Kernel->run;
+
+# DESCRIPTION
+
+This component extends [POE::Component::Schedule](http://search.cpan.org/perldoc?POE::Component::Schedule) by adding an easy way to specify event schedules
+using rfc2445 recurrence.
+
+See [DateTime::Event::ICal](http://search.cpan.org/perldoc?DateTime::Event::ICal) for the syntax, the list of the authorized parameters and their use.
+
+# METHODS
+
+## verify($ical)
+
+This method allows to verify the validity of a rfc2445 recurrence.
+
+- _Parameters_
+
+    `$ical` - HASHREF - The rfc2445 recurrence.
+
+- _Return value_
+
+    Three cases:
+
+        my $ical = { freq => 'secondly', interval => 2 };
+        POE::Component::ICal->verify( $ical );
+
+    In case of not validity, an exception is raised.
+
+        my $is_valid = POE::Component::ICal->verify( $ical );
+
+    A true or false value is returned.
+
+        my ($is_valid, $value) = POE::Component::ICal->verify( $ical );
+
+    In case of not validity, $value contains the error message otherwise a [DateTime::Set](http://search.cpan.org/perldoc?DateTime::Set) instance.
+
+## add\_schedule($schedule, $event, $ical, @args)
+
+This method add a schedule.
+
+- _Parameters_
+
+    `$schedule` - SCALAR - The schedule name.
+
+    `$event` - SCALAR - The event name.
+
+    `$ical` - HASHREF - The rfc2445 recurrence.
+
+    `@args` - optional - The optional list of the arguments.
+
+- _Return value_
+
+    A schedule handle. See [POE::Component::Schedule](http://search.cpan.org/perldoc?POE::Component::Schedule).
+
+- _Remarks_
+
+    The schedule name must be unique by session.
+
+    When the rfc2445 parameter `dtstart` is not specify, this method add it with the `DateTime->now()` value.
+
+- _Example_
+
+        POE::Component::ICal->add_schedule
+        (
+              'tick'                                         # schedule name
+            , clock => { freq => 'secondly', interval => 1 } # event name => ical
+            , 'tick'                                         # ARG0 (Optional)
+            , \$tick_count                                   # ARG1 (Optional)
+        );
+        POE::Component::ICal->add_schedule
+        (
+              'tock'                                         # schedule name
+            , clock => { freq => 'secondly', interval => 2 } # event name => ical
+            , 'tock'                                         # ARG0 (Optional)
+            , \$tock_count                                   # ARG1 (Optional)
+        );
+
+## add($event, $ical, @args)
+
+This method calls `add_schedule()` with schedule name equal to event name.
+
+- _Parameters_
+
+    `$event` - SCALAR - The event name.
+
+    `$ical` - HASHREF - The rfc2445 recurrence.
+
+    `@args` - optional - The optional list of the arguments.
+
+- _Return value_
+
+    See `add_schedule()`.
+
+- _Remarks_
+
+    See `add_schedule()`.
+
+- _Example_
+
+        POE::Component::ICal->add_schedule('tick', tick => { freq => 'secondly', interval => 5 });
+        POE::Component::ICal->add(                 tick => { freq => 'secondly', interval => 5 });
+
+## remove( $schedule )
+
+This method remove a schedule.
+
+- _Parameters_
+
+    `$schedule` - SCALAR - The schedule name.
+
+- _Example_
+
+        POE::Component::ICal->add_schedule('tock', clock => { freq => 'secondly', interval => 1 });
+        POE::Component::ICal->remove('tock');
+
+        POE::Component::ICal->add(tick => { freq => 'secondly', interval => 1 });
+        POE::Component::ICal->remove('tick');
+
+## remove\_all
+
+This method remove all schedules from the active session.
+
+# SEE ALSO
+
+The section 4.3.10 of rfc2445: [http://www.apps.ietf.org/rfc/rfc2445.html](http://www.apps.ietf.org/rfc/rfc2445.html).
+
+# AUTHOR
+
+Loïc TROCHET <losyme@cpan.org>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Loïc TROCHET.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

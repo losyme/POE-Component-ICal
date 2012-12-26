@@ -1,141 +1,20 @@
-#######
-##
-##----- LOSYME
-##----- POE::Component::ICal
-##----- Schedule POE events using rfc2445 recurrences
-##----- ICal.pm
-##
-########################################################################################################################
-
 package POE::Component::ICal;
+# ABSTRACT: Schedule POE events using rfc2445 recurrences
 
 use strict;
 use warnings;
-
-our $VERSION   =   '0.05';
-our $AUTHORITY = 'LOSYME';
 
 use Carp qw(croak);
 use DateTime;
 use DateTime::Event::ICal;
 use POE::Kernel;
+
+use POE::Component::Schedule;
 use base qw(POE::Component::Schedule);
 
 my $_schedules = {};
 
-##--------------------------------------------------------------------------------------------------------------------##
-##  This method allows to verify the validity of a rfc2445 recurrence.
-sub verify
-{
-    my ($class, $ical) = @_;
-    
-    if (defined wantarray)
-    {
-        my $set;
-        eval { $set = DateTime::Event::ICal->recur(%$ical); };
-        my $is_valid = not $@;
-        return wantarray ? ($is_valid, $is_valid ? $set : $@) : $is_valid;
-    }
-    
-    DateTime::Event::ICal->recur(%$ical);
-    return 1;
-}
-
-##--------------------------------------------------------------------------------------------------------------------##
-##  This method add a schedule.
-sub add_schedule
-{
-    my ($class, $shedule, $event, $ical, @args) = @_;
-    
-    $ical->{dtstart} = DateTime->now unless exists $ical->{dtstart};
-    
-    my ($is_valid, $value) = $class->verify($ical);
-    croak $value unless $is_valid;
-    
-    my $session = POE::Kernel->get_active_session;
-    return $_schedules->{$session->ID}->{$shedule} = $class->SUPER::add($session, $event => $value, @args);
-}
-
-##--------------------------------------------------------------------------------------------------------------------##
-##  This method calls C<add_schedule()> with schedule name equal to event name.
-sub add
-{
-    my ($class, $event, $ical, @args) = @_;
-    return $class->add_schedule($event, $event, $ical, @args);
-}
-
-##--------------------------------------------------------------------------------------------------------------------##
-##  This method remove a schedule.
-sub remove
-{
-    my ($class, $schedule) = @_;
-    delete $_schedules->{POE::Kernel->get_active_session->ID}->{$schedule};
-}
-
-##--------------------------------------------------------------------------------------------------------------------##
-##  This method remove all schedules from the active session.
-sub remove_all
-{
-    delete $_schedules->{POE::Kernel->get_active_session->ID};
-}
-
-1;
-
-__END__
-
-=pod
-
-=head1 NAME
-
-POE::Component::ICal - Schedule POE events using rfc2445 recurrences.
-
-=head1 VERSION
-
-Version 0.04
-
-=head1 SYNOPSIS
-
-    use strict;
-    use warnings;
-    use POE;
-    use POE::Component::ICal;
-    
-    my $count = 5;
-    
-    POE::Session->create
-    (
-        inline_states =>
-        {
-            _start => sub
-            {
-                print "_start\n";
-                $_[HEAP]{count} = $count;
-                POE::Component::ICal->add(tick => { freq => 'secondly', interval => 1 });
-            },
-            tick => sub
-            {
-                print "tick: ' . --$_[HEAP]{count}\n";
-                POE::Component::ICal->remove('tick') if $_[HEAP]{count} == 0;
-            },
-            _stop => sub
-            {
-                print "_stop\n";
-            }
-        }
-    );
-    
-    POE::Kernel->run;
-
-=head1 DESCRIPTION
-
-This component extends L<POE::Component::Schedule> by adding an easy way to specify event schedules
-using rfc2445 recurrence.
-
-See L<DateTime::Event::ICal> for the syntax, the list of the authorized parameters and their use.
-
-=head1 METHODS
-
-=head2 verify( $ical )
+=method verify($ical)
 
 This method allows to verify the validity of a rfc2445 recurrence.
 
@@ -160,11 +39,29 @@ A true or false value is returned.
 
     my ($is_valid, $value) = POE::Component::ICal->verify( $ical );
 
-In case of not validity, $value contains the error message otherwise a L<DateTime::Set> instance. 
+In case of not validity, $value contains the error message otherwise a L<DateTime::Set> instance.
 
 =back
 
-=head2 add_schedule($schedule, $event, $ical, @args)
+=cut
+
+sub verify
+{
+    my ($class, $ical) = @_;
+
+    if (defined wantarray)
+    {
+        my $set;
+        eval { $set = DateTime::Event::ICal->recur(%$ical); };
+        my $is_valid = not $@;
+        return wantarray ? ($is_valid, $is_valid ? $set : $@) : $is_valid;
+    }
+
+    DateTime::Event::ICal->recur(%$ical);
+    return 1;
+}
+
+=method add_schedule($schedule, $event, $ical, @args)
 
 This method add a schedule.
 
@@ -209,7 +106,22 @@ When the rfc2445 parameter C<dtstart> is not specify, this method add it with th
 
 =back
 
-=head2 add($event, $ical, @args)
+=cut
+
+sub add_schedule
+{
+    my ($class, $shedule, $event, $ical, @args) = @_;
+
+    $ical->{dtstart} = DateTime->now unless exists $ical->{dtstart};
+
+    my ($is_valid, $value) = $class->verify($ical);
+    croak $value unless $is_valid;
+
+    my $session = POE::Kernel->get_active_session;
+    return $_schedules->{$session->ID}->{$shedule} = $class->SUPER::add($session, $event => $value, @args);
+}
+
+=method add($event, $ical, @args)
 
 This method calls C<add_schedule()> with schedule name equal to event name.
 
@@ -238,7 +150,15 @@ See C<add_schedule()>.
 
 =back
 
-=head2 remove( $schedule )
+=cut
+
+sub add
+{
+    my ($class, $event, $ical, @args) = @_;
+    return $class->add_schedule($event, $event, $ical, @args);
+}
+
+=method remove( $schedule )
 
 This method remove a schedule.
 
@@ -258,28 +178,75 @@ C<$schedule> - SCALAR - The schedule name.
 
 =back
 
-=head2 remove_all()
+=cut
+
+sub remove
+{
+    my ($class, $schedule) = @_;
+    delete $_schedules->{POE::Kernel->get_active_session->ID}->{$schedule};
+}
+
+=method remove_all
 
 This method remove all schedules from the active session.
+
+=cut
+
+sub remove_all
+{
+    delete $_schedules->{POE::Kernel->get_active_session->ID};
+}
+
+1;
+
+__END__
+
+=pod
+
+=head1 SYNOPSIS
+
+    use strict;
+    use warnings;
+    use POE;
+    use POE::Component::ICal;
+
+    my $count = 5;
+
+    POE::Session->create
+    (
+        inline_states =>
+        {
+            _start => sub
+            {
+                print "_start\n";
+                $_[HEAP]{count} = $count;
+                POE::Component::ICal->add(tick => { freq => 'secondly', interval => 1 });
+            },
+            tick => sub
+            {
+                print "tick: ' . --$_[HEAP]{count}\n";
+                POE::Component::ICal->remove('tick') if $_[HEAP]{count} == 0;
+            },
+            _stop => sub
+            {
+                print "_stop\n";
+            }
+        }
+    );
+
+    POE::Kernel->run;
+
+=head1 DESCRIPTION
+
+This component extends L<POE::Component::Schedule> by adding an easy way to specify event schedules
+using rfc2445 recurrence.
+
+See L<DateTime::Event::ICal> for the syntax, the list of the authorized parameters and their use.
 
 =head1 SEE ALSO
 
 The section 4.3.10 of rfc2445: L<http://www.apps.ietf.org/rfc/rfc2445.html>.
 
-=head1 AUTHOR
-
-LoE<iuml>c TROCHET E<lt>losyme@gmail.comE<gt>
-
-Repository available at L<https://github.com/losyme/POE-Component-ICal>.
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (c) 2011-2012 by LoE<iuml>c TROCHET.
-
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
-
-See L<http://dev.perl.org/licenses/> for more information.
+=encoding utf8
 
 =cut
-
-####### END ############################################################################################################

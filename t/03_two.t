@@ -1,14 +1,6 @@
-#######
-##
-##----- LOSYME
-##----- POE::Component::ICal
-##----- Schedule POE events using rfc2445 recurrences
-##----- 05_two.t
-##
-########################################################################################################################
-
 use strict;
 use warnings;
+
 use Test::More;
 use POE;
 use POE::Component::ICal;
@@ -62,5 +54,3 @@ POE::Session->create
 POE::Kernel->run;
 
 ok(1);
-
-####### END ############################################################################################################
